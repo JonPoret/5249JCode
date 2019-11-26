@@ -1,0 +1,108 @@
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       main.cpp                                                  */
+/*    Author:       C:\Users\shsstudent                                       */
+/*    Created:      Thu Oct 17 2019                                           */
+/*    Description:  V5 project                                                */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+#include "vex.h"
+
+using namespace vex;
+
+// A global instance of vex::brain used for printing to the V5 brain screen
+vex::brain       Brain;
+vex::controller Controller;
+vex::motor RightMotor(vex::PORT2);
+vex::motor LeftMotor(vex::PORT1, true);
+vex::motor RightArm(vex::PORT16);
+vex::motor LeftArm(vex::PORT6);
+vex::motor RightFlapper(vex::PORT15);
+vex::motor LeftFlapper(vex::PORT5);
+vex::motor LeftRampMotor(vex::PORT10);
+vex::motor RightRampMotor(vex::PORT20);
+
+// define your global instances of motors and other devices here
+double DegToInches(int ticks)
+    {
+      double inches = 0;
+      inches = ((8*M_PI)/360)*ticks;
+      return inches;
+    }
+  double InchestoDeg(double inches)
+  {
+    double degrees = 0;
+    degrees = ((360)/(8*M_PI))*inches;
+    return degrees;
+  }
+
+int main() {
+    int count = 0;
+   
+    while(1) {
+        if (Controller.Axis3.position() > 10 || Controller.Axis3.position() < -10)
+          {
+            RightMotor.spin(vex::directionType::rev, Controller.Axis3.position(), vex::velocityUnits::pct);
+            LeftMotor.spin(vex::directionType::rev, Controller.Axis3.position(), vex::velocityUnits::pct);
+          }
+          if (Controller.Axis1.position() > 10 || Controller.Axis1.position() < -10)
+          {
+            if(Controller.Axis1.position() > 10)
+              {
+                RightMotor.spin(vex::directionType::fwd, Controller.Axis1.position(), vex::velocityUnits::pct);
+            LeftMotor.spin(vex::directionType::fwd, -100, vex::velocityUnits::pct);
+              }
+              else if (Controller.Axis1.position() < -10)
+              {
+                 RightMotor.spin(vex::directionType::fwd, Controller.Axis1.position(), vex::velocityUnits::pct);
+                LeftMotor.spin(vex::directionType::fwd, abs(Controller.Axis1.position()), vex::velocityUnits::pct);
+              }
+          }
+          if (Controller.ButtonR1.pressing())
+          {
+            RightArm.spin(vex::directionType::fwd, 45, vex::velocityUnits::pct);
+            LeftArm.spin(vex::directionType::rev, 45, vex::velocityUnits::pct);
+          }
+          if (Controller.ButtonR2.pressing())
+          {
+            RightArm.spin(vex::directionType::rev, 45, vex::velocityUnits::pct);
+            LeftArm.spin(vex::directionType::fwd, 45, vex::velocityUnits::pct);
+          }
+          if (Controller.ButtonL1.pressing())
+          {
+            RightFlapper.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+            LeftFlapper.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+          }
+          if (Controller.ButtonL2.pressing())
+          {
+            RightFlapper.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+            LeftFlapper.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+          }
+          if (Controller.ButtonA.pressing())
+          {
+            RightRampMotor.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
+            LeftRampMotor.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+          }
+          if (Controller.ButtonX.pressing())
+          {
+            RightRampMotor.spin(vex::directionType::fwd, 45, vex::velocityUnits::pct);
+            LeftRampMotor.spin(vex::directionType::rev, 45, vex::velocityUnits::pct);
+          }
+
+              vex::task::sleep(1);
+              RightMotor.stop(vex::brakeType::coast);
+              LeftMotor.stop(vex::brakeType::coast);
+              RightArm.stop(vex::brakeType::hold);
+              LeftArm.stop(vex::brakeType::hold);
+              RightFlapper.stop(vex::brakeType::coast);
+              LeftFlapper.stop(vex::brakeType::coast);
+              RightRampMotor.stop(vex::brakeType::hold);
+              LeftRampMotor.stop(vex::brakeType::hold);
+    }
+
+
+    //360 degrees = 8*pi inches
+
+    
+}
+////
